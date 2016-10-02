@@ -29,21 +29,12 @@ mdc --dot < in.md | pandoc -o out.html
 
 ### Example
 
-```markdown
-The following diagram shows something
-
-\`\`\`dot
+```dot
 digraph {
-    {vim dot} -> vimdot
+    P -> {X Y};
+    Z -> {X Y};
+    Z -> P [style=dashed];
 }
-\`\`\`
 ```
 
-translated into the following
-
-```markdown
-The following diagram shows something
-
-<svg code>
-```
-
+to a svg image (also see `sample/out.html`).
