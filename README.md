@@ -19,13 +19,7 @@ mdc < in.md | pandoc -o out.html
 
 ## dot (graphviz)
 
-`--dot` translate dot blocks in the input to `<svg>` images.
-
-### Usage
-
-```bash
-mdc --dot < in.md | pandoc -o out.html
-```
+`mdc` finds dot code-blocks and translates to `<svg>` images.
 
 ### Example
 
