@@ -5,6 +5,7 @@ def compile_dot(lines)
     dst = `mktemp`.chomp
     File.write(src, lines.join("\n"))
     `dot -Tsvg < #{src} > #{dst}`
+    # STDERR.puts "#{lines}"
     File.read(dst)
 end
 
@@ -26,6 +27,7 @@ for line in lines
         if line == END_MARK
             puts compile_dot(buffer)
             buffer = []
+            status = :plain
         else
             buffer << line
         end
