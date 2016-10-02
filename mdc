@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+def compile_dot(lines)
+    src = `mktemp`.chomp
+    dst = `mktemp`.chomp
+    File.write(src, lines.join("\n"))
+    `dot -Tsvg < #{src} > #{dst}`
+    File.read(dst)
+end
+
+DOT_BEGIN_MARK = "```dot"
+END_MARK = "```"
+
+lines = readlines.map{|line| line.chomp}
+buffer = []
+
+status = :plain
+for line in lines
+    if status == :plain
+        if line == DOT_BEGIN_MARK
+            status = :mkd
+        else
+            puts line
+        end
+    elsif status == :mkd
+        if line == END_MARK
+            puts compile_dot(buffer)
+            buffer = []
+        else
+            buffer << line
+        end
+    end
+end
