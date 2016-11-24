@@ -10,6 +10,7 @@ def compile_dot(lines)
 end
 
 DOT_BEGIN_MARK = "```dot"
+AT_INCLUDE_BEGIN_MARK = /^@\[([^\]]*)\]\(([^\)]*)\)$/
 END_MARK = "```"
 
 lines = readlines.map{|line| line.chomp}
@@ -20,6 +21,11 @@ for line in lines
     if status == :plain
         if line == DOT_BEGIN_MARK
             status = :mkd
+        elsif line =~ AT_INCLUDE_BEGIN_MARK
+            res = AT_INCLUDE_BEGIN_MARK.match(line)
+            puts "\n```#{res[1]}"
+            puts `cat #{res[2]}`
+            puts "```\n\n"
         else
             puts line
         end

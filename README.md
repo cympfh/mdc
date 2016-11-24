@@ -17,6 +17,20 @@ or if you wish pandoc
 mdc < in.md | pandoc -o out.html
 ```
 
+## @include (embedding)
+
+`mdc` introduces new syntax,
+`@[filetype](filepath)`.
+This leads
+
+```
+｀｀｀[filetype]
+(content of filepath)
+｀｀｀
+```
+
+e.g. `@[ruby](example.rb)`
+
 ## dot (graphviz)
 
 `mdc` finds dot code-blocks and translates to `<svg>` images.
