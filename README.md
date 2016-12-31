@@ -1,27 +1,25 @@
 # mdc -- markdown compiler (markdown-to-markdown)
 
+Markdown + some special syntax
+
 ## Basic usage
-
-`mdc` is an executable script (in Ruby),
-which read markdown from stdin
-and otuput compiled markdown to stdout.
-
 
 ```bash
 mdc < in.md > out.md
-```
-
-or if you wish pandoc
-
-```bash
 mdc < in.md | pandoc -o out.html
 ```
 
-## @include (embedding)
+## Special Syntax
 
-`mdc` introduces new syntax,
-`@[filetype](filepath)`.
-This leads
+### `@[filetype](filepath)` include
+
+```markdown
+@[filetype](filepath)
+```
+
+`filepath` embedded as `filetype`
+
+i.e.
 
 ```
 ｀｀｀[filetype]
@@ -31,11 +29,9 @@ This leads
 
 e.g. `@[ruby](example.rb)`
 
-## dot (graphviz)
+### `dot` (graphviz)
 
 `mdc` finds dot code-blocks and translates to `<svg>` images.
-
-### Example
 
 ```dot
 digraph {
@@ -46,3 +42,19 @@ digraph {
 ```
 
 to a svg image (also see `sample/out.html`).
+
+### `<` exec
+
+```markdown
+< system command
+```
+
+exec `system command` (in bash) and the stdout embeded
+
+e.g.
+
+```markdown
+compiled date is
+< date
+```
+
