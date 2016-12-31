@@ -45,6 +45,8 @@ to a svg image (also see `sample/out.html`).
 
 ### `<` exec
 
+The line which begins with `< ` (leftangle-space)
+
 ```markdown
 < system command
 ```
