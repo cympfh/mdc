@@ -11,28 +11,67 @@ mdc < in.md | pandoc -o out.html
 
 ## Special Syntax
 
-### `@[filetype](filepath)` include
+### include system
+
+#### Format:
 
 ```markdown
-@[filetype](filepath)
+!(filepath)
 ```
 
-`filepath` embedded as `filetype`
+replaces the content of the file.
 
-i.e.
+#### Example:
 
-```
-｀｀｀[filetype]
-(content of filepath)
-｀｀｀
+```markdown
+!(section1.md)
 ```
 
-e.g. `@[ruby](example.rb)`
+makes
 
-### `dot` (graphviz)
+```
+(content of section1.md)
+```
 
-`mdc` finds dot code-blocks and translates to `<svg>` images.
+### include system as a code snippet
 
+#### Format:
+
+```markdown
+![filetype](filepath)
+```
+
+#### Example:
+
+```markdown
+![ruby](example.rb)
+```
+
+makes
+
+<pre>
+```ruby
+(content of example.rb)
+```
+</pre>
+
+### graphviz (dot)
+
+graphviz (dot) is a tool which make graph (nodes and edges) images.
+`mdc` calls `dot` and makes svg images when
+
+<pre>
+```dot
+    ...
+    ...
+```
+</pre>
+
+snippet found.
+
+#### Example:
+
+<pre>
 ```dot
 digraph {
     P -> {X Y};
@@ -40,23 +79,28 @@ digraph {
     Z -> P [style=dashed];
 }
 ```
-
-to a svg image (also see `sample/out.html`).
+</pre>
 
 ### `<` exec
 
-The line which begins with `< ` (leftangle-space)
+The line which begins with `< ` (leftangle-space) will be interpreted as shell (bash) code, and executed.
+
+#### Format:
 
 ```markdown
 < system command
 ```
 
-exec `system command` (in bash) and the stdout embeded
-
-e.g.
+#### Example:
 
 ```markdown
-compiled date is
-< date
+This document was compiled at
+< LANG=en date
+.
+```
+
+```markdown
+10 count:
+< seq 1 10 | tr '\n' ' '
 ```
 

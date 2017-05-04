@@ -1,18 +1,37 @@
 #!/usr/bin/env ruby
 
+DOT_BEGIN = '```dot'.freeze
+FILE_INCLUDE = /^!\(([^\)]*)\)$/
+CODE_INCLUDE = /^!\[([^\]]*)\]\(([^\)]*)\)$/
+EXEC = /^< (.*)$/
+END_SYMBOL = '```'.freeze
+
+# commands with a line
+
+def file_include(line)
+  res = FILE_INCLUDE.match(line)
+  path = res[1]
+  puts File.open(path).read
+end
+
+def code_include(line)
+  res = CODE_INCLUDE.match(line)
+  filetype = res[1]
+  path = res[2]
+  puts "\n```#{filetype}"
+  puts File.open(path).read
+  puts "\n```\n\n"
+end
+
+# commands with a buffer (multiple lines)
+
 def compile_dot(lines)
   src = `mktemp`.chomp
   dst = `mktemp`.chomp
   File.write(src, lines.join("\n"))
   `dot -Tsvg < #{src} > #{dst}`
-  # STDERR.puts "#{lines}"
-  File.read(dst)
+  puts File.read(dst)
 end
-
-DOT_BEGIN_MARK = '```dot'
-AT_INCLUDE_MARK = /^@\[([^\]]*)\]\(([^\)]*)\)$/
-EXEC_MARK = /^< (.*)$/
-END_MARK = '```'
 
 lines = readlines.map(&:chomp)
 buffer = []
@@ -20,23 +39,22 @@ buffer = []
 status = :plain
 lines.each do |line|
   if status == :plain
-    if line == DOT_BEGIN_MARK
-      status = :mkd
-    elsif line =~ AT_INCLUDE_MARK
-      res = AT_INCLUDE_MARK.match(line)
-      puts "\n```#{res[1]}"
-      puts `cat #{res[2]}`
-      puts "```\n\n"
-    elsif line =~ EXEC_MARK
-      res = EXEC_MARK.match(line)
+    if line == DOT_BEGIN
+      status = :dot
+    elsif line =~ FILE_INCLUDE
+      file_include line
+    elsif line =~ CODE_INCLUDE
+      code_include line
+    elsif line =~ EXEC
+      res = EXEC.match(line)
       command = res[1]
       puts `#{command}`
     else
       puts line
     end
-  elsif status == :mkd
-    if line == END_MARK
-      puts compile_dot(buffer)
+  elsif status == :dot
+    if line == END_SYMBOL
+      compile_dot buffer
       buffer = []
       status = :plain
     else
