@@ -13,10 +13,14 @@ mdc < in.md | pandoc -o out.html
 
 ### include system
 
+You can embed the content of another file.
+If the file is markdown (`.md`, `.mkd`), the content will be embbed after compiled with `mdc`
+(please see `tests/include-nest/actual.md`).
+
 #### Format:
 
 ```markdown
-!(filepath)
+@(filepath)
 ```
 
 replaces the content of the file.
@@ -44,7 +48,7 @@ makes
 #### Example:
 
 ```markdown
-![ruby](example.rb)
+@[ruby](example.rb)
 ```
 
 makes

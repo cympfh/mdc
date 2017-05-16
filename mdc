@@ -11,7 +11,11 @@ END_SYMBOL = '```'.freeze
 def file_include(line)
   res = FILE_INCLUDE.match(line)
   path = res[1]
-  puts File.open(path).read
+  if path.end_with?('.md', '.mkd', '.markdown')
+    compile(File.open(path).readlines)
+  else
+    puts File.open(path).read
+  end
 end
 
 def code_include(line)
@@ -33,32 +37,35 @@ def compile_dot(lines)
   puts File.read(dst)
 end
 
-lines = readlines.map(&:chomp)
-buffer = []
-
-status = :plain
-lines.each do |line|
-  if status == :plain
-    if line == DOT_BEGIN
-      status = :dot
-    elsif line =~ FILE_INCLUDE
-      file_include line
-    elsif line =~ CODE_INCLUDE
-      code_include line
-    elsif line =~ EXEC
-      res = EXEC.match(line)
-      command = res[1]
-      puts `#{command}`
-    else
-      puts line
-    end
-  elsif status == :dot
-    if line == END_SYMBOL
-      compile_dot buffer
-      buffer = []
-      status = :plain
-    else
-      buffer << line
+def compile(lines)
+  buffer = []
+  status = :plain
+  lines.each do |line|
+    if status == :plain
+      if line == DOT_BEGIN
+        status = :dot
+      elsif line =~ FILE_INCLUDE
+        file_include line
+      elsif line =~ CODE_INCLUDE
+        code_include line
+      elsif line =~ EXEC
+        res = EXEC.match(line)
+        command = res[1]
+        puts `#{command}`
+      else
+        puts line
+      end
+    elsif status == :dot
+      if line == END_SYMBOL
+        compile_dot buffer
+        buffer = []
+        status = :plain
+      else
+        buffer << line
+      end
     end
   end
 end
+
+lines = readlines.map(&:chomp)
+compile(lines)
