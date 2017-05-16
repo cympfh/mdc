@@ -1,1 +1,1 @@
-![ruby](include-code/example.rb)
+@[ruby](include-code/example.rb)

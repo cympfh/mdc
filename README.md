@@ -24,7 +24,7 @@ replaces the content of the file.
 #### Example:
 
 ```markdown
-!(section1.md)
+@(section1.md)
 ```
 
 makes
@@ -38,7 +38,7 @@ makes
 #### Format:
 
 ```markdown
-![filetype](filepath)
+@[filetype](filepath)
 ```
 
 #### Example:

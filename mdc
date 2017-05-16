@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
 DOT_BEGIN = '```dot'.freeze
-FILE_INCLUDE = /^!\(([^\)]*)\)$/
-CODE_INCLUDE = /^!\[([^\]]*)\]\(([^\)]*)\)$/
+FILE_INCLUDE = /^@\(([^\)]*)\)$/
+CODE_INCLUDE = /^@\[([^\]]*)\]\(([^\)]*)\)$/
 EXEC = /^< (.*)$/
 END_SYMBOL = '```'.freeze
 
