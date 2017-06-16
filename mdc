@@ -42,7 +42,7 @@ def compile_gnuplot(lines)
   src = `mktemp`.chomp
   lines = ['set terminal svg'] + lines
   File.write(src, lines.join("\n"))
-  puts `gnuplot #{src}`
+  puts `gnuplot #{src}`.delete("\n")
 end
 
 def compile(lines)
