@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 
-DOT_BEGIN = '```dot'.freeze
 FILE_INCLUDE = /^@\(([^\)]*)\)$/
 CODE_INCLUDE = /^@\[([^\]]*)\]\(([^\)]*)\)$/
 EXEC = /^< (.*)$/
+DOT_BEGIN = '```dot'.freeze
+GNUPLOT_BEGIN = '```gnuplot'.freeze
 END_SYMBOL = '```'.freeze
 
 # commands with a line
@@ -37,6 +38,13 @@ def compile_dot(lines)
   puts File.read(dst)
 end
 
+def compile_gnuplot(lines)
+  src = `mktemp`.chomp
+  lines = ['set terminal svg'] + lines
+  File.write(src, lines.join("\n"))
+  puts `gnuplot #{src}`
+end
+
 def compile(lines)
   buffer = []
   status = :plain
@@ -44,6 +52,8 @@ def compile(lines)
     if status == :plain
       if line == DOT_BEGIN
         status = :dot
+      elsif line == GNUPLOT_BEGIN
+        status = :gnuplot
       elsif line =~ FILE_INCLUDE
         file_include line
       elsif line =~ CODE_INCLUDE
@@ -58,6 +68,14 @@ def compile(lines)
     elsif status == :dot
       if line == END_SYMBOL
         compile_dot buffer
+        buffer = []
+        status = :plain
+      else
+        buffer << line
+      end
+    elsif status == :gnuplot
+      if line == END_SYMBOL
+        compile_gnuplot buffer
         buffer = []
         status = :plain
       else

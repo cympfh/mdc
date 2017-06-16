@@ -9,6 +9,10 @@ if re =~ out.delete("\n")
   exit 0
 else
   STDERR.puts 'FAILED!'
-  STDERR.puts "output:\n#{out}"
+  STDERR.puts "Expected:\n#{re}"
+  STDERR.puts "Your output:\n#{out}"
+
+  p out.delete("\n")
+  p re
   exit 1
 end

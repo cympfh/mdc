@@ -85,6 +85,25 @@ digraph {
 ```
 </pre>
 
+### gnuplot
+
+requires `gnuplot` and `svg` terminal.
+
+<pre>
+```gnuplot
+    ...
+    ...
+```
+</pre>
+
+#### Example:
+
+<pre>
+```gnuplot
+plot sin(x)
+```
+</pre>
+
 ### `<` exec
 
 The line which begins with `< ` (leftangle-space) will be interpreted as shell (bash) code, and executed.
