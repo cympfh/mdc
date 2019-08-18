@@ -2,6 +2,7 @@
 
 FILE_INCLUDE = /^@\(([^\)]*)\)$/
 CODE_INCLUDE = /^@\[([^\]]*)\]\(([^\)]*)\)$/
+DOUBLE_LINK = /\[\[([^\]]*)\]\]/
 EXEC = /^< (.*)$/
 DOT_BEGIN = '```dot'.freeze
 GNUPLOT_BEGIN = '```gnuplot'.freeze
@@ -26,6 +27,12 @@ def code_include(line)
   puts "\n```#{filetype}"
   puts File.open(path).read
   puts "\n```\n\n"
+end
+
+# sed a line (when not any command)
+
+def double_link(line)
+  line.gsub DOUBLE_LINK, '[\1](\1)'
 end
 
 # commands with a buffer (multiple lines)
@@ -63,6 +70,7 @@ def compile(lines)
         command = res[1]
         puts `#{command}`
       else
+        line = double_link(line)
         puts line
       end
     elsif status == :dot

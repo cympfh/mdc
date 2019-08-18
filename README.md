@@ -127,3 +127,14 @@ This document was compiled at
 < seq 1 10 | tr '\n' ' '
 ```
 
+### `[[ ]]` link text == address
+
+```markdown
+[[text]]
+```
+
+makes
+
+```markdown
+[text](text)
+```
