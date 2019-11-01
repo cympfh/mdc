@@ -39,10 +39,9 @@ end
 
 def compile_dot(lines)
   src = `mktemp`.chomp
-  dst = `mktemp`.chomp
   File.write(src, lines.join("\n"))
-  `dot -Tsvg < #{src} > #{dst}`
-  puts File.read(dst)
+  image_data = `dot -Tpng #{src} | base64 -w 0`
+  puts "<img src=\"data:image/png;base64,#{image_data}\">"
 end
 
 def compile_gnuplot(lines)
