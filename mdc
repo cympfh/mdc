@@ -6,6 +6,7 @@ DOUBLE_LINK = /\[\[([^\]]*)\]\]/
 EXEC = /^< (.*)$/
 DOT_BEGIN = '```dot'.freeze
 GNUPLOT_BEGIN = '```gnuplot'.freeze
+TIKZCD_BEGIN = '```tikzcd'.freeze
 END_SYMBOL = '```'.freeze
 
 # commands with a line
@@ -51,6 +52,14 @@ def compile_gnuplot(lines)
   puts `gnuplot #{src}`.delete("\n")
 end
 
+def compile_tikzcd(lines)
+  src = `mktemp`.chomp
+  lines = ['\[\begin{tikzcd}'] + lines + ['\end{tikzcd}\]']
+  File.write(src, lines.join("\n"))
+  image_data = `tex2img #{src} - | base64 -w 0`
+  puts "<img src=\"data:image/png;base64,#{image_data}\">"
+end
+
 def compile(lines)
   buffer = []
   status = :plain
@@ -60,6 +69,8 @@ def compile(lines)
         status = :dot
       elsif line == GNUPLOT_BEGIN
         status = :gnuplot
+      elsif line == TIKZCD_BEGIN
+        status = :tikzcd
       elsif line =~ FILE_INCLUDE
         file_include line
       elsif line =~ CODE_INCLUDE
@@ -83,6 +94,14 @@ def compile(lines)
     elsif status == :gnuplot
       if line == END_SYMBOL
         compile_gnuplot buffer
+        buffer = []
+        status = :plain
+      else
+        buffer << line
+      end
+    elsif status == :tikzcd
+      if line == END_SYMBOL
+        compile_tikzcd buffer
         buffer = []
         status = :plain
       else
