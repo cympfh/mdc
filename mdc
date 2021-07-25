@@ -1,8 +1,11 @@
 #!/usr/bin/env ruby
 
+require 'json'
+
 FILE_INCLUDE = /^@\(([^\)]*)\)$/
 CODE_INCLUDE = /^@\[([^\]]*)\]\(([^\)]*)\)$/
 DOUBLE_LINK = /\[\[([^\]]*)\]\]/
+BLOCK_LINK = /\{\{([^\}]*)\}\}/
 EXEC = /^< (.*)$/
 DOT_BEGIN = '```dot'.freeze
 GNUPLOT_BEGIN = '```gnuplot'.freeze
@@ -32,8 +35,62 @@ end
 
 # sed a line (when not any command)
 
-def double_link(line)
-  line.gsub DOUBLE_LINK, '[\1](\1)'
+def inline_link(url)
+  title = `html-title #{url}`.chomp
+  if title.empty?
+    "[#{url}](#{url})"
+  else
+    "[#{title}](#{url})"
+  end
+end
+
+def replace_inline_link(line)
+  while line =~ DOUBLE_LINK
+    res = line.match(DOUBLE_LINK)
+    url = res[1]
+    html = inline_link(url)
+    line = line.sub(res[0], html)
+  end
+  line
+end
+
+def block_link(url)
+
+  case url
+  when /youtube/
+    yid = url.match('v=([^&]*)')[1]
+    return <<EOS
+<div class="youtube" src-id="#{yid}"></div>
+EOS
+  when /twitter/
+    return <<EOS
+<blockquote class="twitter-tweet"><p lang="ja" dir="ltr"></p><a href="#{url}"></a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+EOS
+  else
+    data = JSON.parse(`og #{url}`)
+    title = data['og']['title']
+    image = data['og']['image']
+    description = data['og']['description']
+    if not title
+      title = `html-title #{url}`
+    end
+    return <<EOS
+<div class="web-emb" meta-title="#{title}" meta-image="#{image}" meta-description="#{description}" meta-url="#{url}">
+<a href="#{url}">#{title}</a>
+</div>
+EOS
+  end
+end
+
+def replace_block_link(line)
+  while line =~ BLOCK_LINK
+    res = line.match(BLOCK_LINK)
+    url = res[1]
+    html = block_link(url)
+    line = line.sub(res[0], html)
+  end
+  line
 end
 
 # commands with a buffer (multiple lines)
@@ -80,7 +137,8 @@ def compile(lines)
         command = res[1]
         puts `#{command}`
       else
-        line = double_link(line)
+        line = replace_inline_link(line)
+        line = replace_block_link(line)
         puts line
       end
     elsif status == :dot

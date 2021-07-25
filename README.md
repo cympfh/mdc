@@ -130,11 +130,24 @@ This document was compiled at
 ### `[[ ]]` link text == address
 
 ```markdown
-[[text]]
+[[URL]]
 ```
 
 makes
 
 ```markdown
-[text](text)
+[HTML-Title](URL)
+```
+
+if `HTML-Title` can be fetched successfully,
+else
+
+```markdown
+[URL](URL)
+```
+
+### `{{ }}` OGP Block Link
+
+```markdown
+{{URL}}
 ```
