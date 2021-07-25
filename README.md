@@ -1,3 +1,5 @@
+**NOTE** This is not unmaintained. Please check [cympfh/xmd](https://github.com/cympfh/xmd)
+
 # mdc -- markdown compiler (markdown-to-markdown)
 
 Markdown + some special syntax
