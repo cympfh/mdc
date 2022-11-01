@@ -1,3 +1,7 @@
+# THIS REPOSITORY IS ARCHIVED.
+
+NOW WORKING ON: https://github.com/cympfh/unidoc
+
 # mdc -- markdown compiler (markdown-to-markdown)
 
 Markdown + some special syntax
